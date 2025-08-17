@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0ea5e9">
+  <title>טיול ברומניה – מסלול + אוכל GF</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <style>
+    :root{
+      --bg:#ffffff; --fg:#0f172a; --muted:#64748b; --card:#f8fafc; --brand:#0ea5e9; --brand-2:#0369a1; --chip:#e0f2fe; --line:rgba(148,163,184,.25);
+    }
+    .dark{ --bg:#0b1020; --fg:#e5e7eb; --muted:#9ca3af; --card:#0f172a; --brand:#38bdf8; --brand-2:#0891b2; --chip:#073042; --line:rgba(148,163,184,.2); }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0; background:var(--bg); color:var(--fg); font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Helvetica Neue",Arial}
+    header{position:sticky; top:0; z-index:10; display:flex; gap:.5rem; align-items:center; justify-content:space-between;
+      padding:.8rem 1rem; background:linear-gradient(180deg, rgba(2,6,23,.95), rgba(2,6,23,.8)); color:#fff; backdrop-filter:saturate(180%) blur(10px)}
+    .title{font-size:1.05rem; font-weight:700}
+    .controls{display:flex; gap:.5rem; align-items:center}
+    button{border:none; border-radius:12px; padding:.55rem .75rem; cursor:pointer; font-weight:600; background:var(--brand); color:#fff}
+    button.secondary{background:#334155}
+    button.ghost{background:transparent; color:#fff; border:1px solid rgba(255,255,255,.25)}
+    main{padding:1rem; max-width:1000px; margin:0 auto}
+    .search-row{display:grid; grid-template-columns:1fr auto auto auto; gap:.5rem; margin:.5rem 0 1rem}
+    .search-row input{width:100%; padding:.65rem .8rem; border-radius:12px; border:1px solid #334155; background:var(--card); color:var(--fg)}
+    .card{background:var(--card); border:1px solid var(--line); border-radius:18px; padding:1rem; margin:.75rem 0; box-shadow:0 1px 0 rgba(255,255,255,.04) inset,0 2px 10px rgba(0,0,0,.06)}
+    h2{margin:.2rem 0 .6rem; font-size:1.05rem}
+    h3{margin:.8rem 0 .4rem; font-size:1rem}
+    ul{margin:.2rem 0 .6rem; padding-inline-start:1.2rem}
+    li{margin:.25rem 0}
+    .chips{display:flex; flex-wrap:wrap; gap:.4rem; margin:.4rem 0}
+    .chip{background:var(--chip); color:var(--brand-2); padding:.25rem .6rem; border-radius:9999px; font-size:.8rem}
+    .line{height:1px; background:var(--line); margin:.6rem 0}
+    a{color:var(--brand-2); text-decoration:none}
+    a:hover{text-decoration:underline}
+    .row{display:flex; gap:.5rem; flex-wrap:wrap}
+    .sm{font-size:.9rem; color:var(--muted)}
+    .pin{font-size:1rem}
+    .langLTR{direction:ltr}
+    .footer-space{height:72px}
+    .fab{position:fixed; right:16px; bottom:16px; z-index:12; background:var(--brand); color:#fff; border:none; border-radius:9999px; padding:.9rem 1rem; box-shadow:0 8px 32px rgba(14,165,233,.35)}
+    .place{display:grid; grid-template-columns:88px 1fr; gap:.6rem; align-items:start; margin:.55rem 0}
+    .thumb{width:88px; height:66px; object-fit:cover; border-radius:10px; border:1px solid var(--line); background:#1112}
+    .desc{font-size:.9rem; color:var(--muted); margin-top:.15rem}
+    .actions{display:flex; gap:.5rem; margin-top:.25rem}
+    .pill{display:inline-flex; align-items:center; gap:.35rem; padding:.28rem .6rem; border-radius:9999px; background:rgba(14,165,233,.12); color:var(--brand-2); font-size:.8rem; border:1px solid rgba(14,165,233,.25)}
+    /* Accordion */
+    details.card{padding:0}
+    summary{
+      list-style:none; cursor:pointer; padding:1rem; display:flex; justify-content:space-between; align-items:center;
+      border-bottom:1px solid var(--line); user-select:none; gap:.75rem
+    }
+    summary::-webkit-details-marker{display:none}
+    .summary-title{font-weight:700}
+    .summary-meta{display:flex; gap:.5rem; align-items:center}
+    .summary-badges .chip{margin-inline-start:.25rem}
+    .section-body{padding:1rem}
+    .chev{transition:transform .15s ease}
+    details[open] .chev{transform:rotate(90deg)}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="title" id="appTitle">תכנית טיול ברומניה</div>
+    <div class="controls">
+      <button class="ghost" id="installBtn" style="display:none">התקנה</button>
+      <button class="secondary" id="langBtn">EN</button>
+      <button id="themeBtn">🌙</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="search-row">
+      <input id="search" placeholder="חיפוש יום / עיר / מקום..." />
+      <button class="secondary" id="clearBtn">נקה</button>
+      <button class="secondary" id="expandBtn">פתח הכל</button>
+      <button class="secondary" id="collapseBtn">כווץ הכל</button>
+    </div>
+
+    <div class="card sm">
+      <div class="row">
+        <span class="pill">הקשה על 📍 תפתח מקום בגוגל מפות</span>
+        <span class="pill">הקשה על 🧭 תפתח ניווט מהמיקום הנוכחי</span>
+        <span class="pill">עובד אופליין – התוכן נשמר במכשיר</span>
+      </div>
+    </div>
+
+    <div id="days"></div>
+    <div class="footer-space"></div>
+  </main>
+
+  <button class="fab" id="nearbyBtn">מסעדות GF קרובות 🍽️</button>
+
+  <script>
+    // ---------- Theme
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const savedTheme = localStorage.getItem('theme') || (prefersDark ? 'dark' : 'light');
+    if(savedTheme === 'dark') document.body.classList.add('dark');
+
+    // ---------- Data (with descriptions + images)
+    const HE = [
+      { d:1, city:'בוקרשט', hotel:'לינה בבוקרשט',
+        attractions:[
+          { n:'מנוחה מהטיסה', q:'Bucharest Center',
+            desc:'נחיתה, צ׳ק-אין והתארגנות קלה לפני תחילת הטיול.',
+            img:'' }
+        ],
+        food:[
+          { n:'Aubergine', t:'מסעדה GF', q:'Aubergine Bucharest',
+            desc:'מטבח ים־תיכוני עם מגוון אופציות ללא גלוטן ואווירה רגועה.', img:'' }
+        ]
+      },
+      { d:2, city:'בוקרשט', hotel:'בוקרשט',
+        attractions:[
+          { n:'Therme Bucharest', q:'Therme Bucharest',
+            desc:'פארק ספא ומים ענק עם אזורי ילדים ובריכות חמות.', 
+            img:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Therme_Bucuresti.jpg/640px-Therme_Bucuresti.jpg' },
+          { n:'פארק Herăstrău', q:'Parcul Herastrau',
+            desc:'פארק ירוק סביב אגם, מסלולי הליכה ומגרשי משחקים.', 
+            img:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Parcul_Herastrau_Bucuresti.jpg/640px-Parcul_Herastrau_Bucuresti.jpg' }
+        ],
+        food:[
+          { n:'Pizzeria Viitorului', t:'פיצה GF', q:'Pizzeria Viitorului Bucharest',
+            desc:'פיצריה עם בצק ללא גלוטן—בחירה ידידותית לילדים.', img:'' },
+          { n:'Casa de Tacos', t:'טאקוס GF', q:'Casa de Tacos Bucharest',
+            desc:'טאקוס קליל עם אפשרויות מסומנות ללא גלוטן.', img:'' }
+        ]
+      },
+      { d:3, city:'סינאיה → בראשוב', hotel:'בראשוב',
+        attractions:[
+          { n:'ארמון פלש', q:'Peleș Castle',
+            desc:'טירת ניאו־רנסנס מרהיבה מהמאה ה־19.', img:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Peles_Castle.jpg/640px-Peles_Castle.jpg' },
+          { n:'אגם בולבוצ’י', q:'Bolboci Lake',
+            desc:'אגם הררי פסטורלי – עצירה מצוינת לתמונה ופיקניק.', img:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Lacul_Bolboci.jpg/640px-Lacul_Bolboci.jpg' }
+        ],
+        food:[
+          { n:'Prato Restaurant', t:'GF', q:'Prato Restaurant Brașov',
+            desc:'ביסטרו מרכזי עם התאמות ללא גלוטן.', img:'' }
+        ]
+      },
+      { d:4, city:'בראשוב', hotel:'בראשוב',
+        attractions:[
+          { n:'פארק דינוזאורים (Râșnov)', q:'Dino Parc Rasnov',
+            desc:'פארק עם דינוזאורים בגודל טבעי – מושלם לילדים.', img:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Dino_Parc_Rasnov.jpg/640px-Dino_Parc_Rasnov.jpg' },
+          { n:'מבצר ראשנוב', q:'Rasnov Fortress',
+            desc:'מבצר הררי ותצפיות יפות על העמק.', img:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Rasnov_Citadel.jpg/640px-Rasnov_Citadel.jpg' }
+        ],
+        food:[
+          { n:'Massimo', t:'GF', q:'Massimo Brașov',
+            desc:'איטלקי משפחתי; בקשו התאמות GF.', img:'' },
+          { n:'Prato Restaurant', t:'GF', q:'Prato Restaurant Brașov',
+            desc:'נוח עם ילדים וצוות מודע לאלרגנים.', img:'' }
+        ]
+      },
+      { d:5, city:'בראשוב → סיגישוארה', hotel:'סיגישוארה',
+        attractions:[
+          { n:'סיור בעיר העתיקה', q:'Sighișoara Citadel',
+            desc:'עיר ימי־ביניימית צבעונית; אתר מורשת עולמית.', img:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Sighisoara_Cetate.jpg/640px-Sighisoara_Cetate.jpg' }
+        ],
+        food:[
+          { n:'Joseph T. Restaurant & Wine Bar', t:'GF', q:'Joseph T Restaurant Sighișoara',
+            desc:'מטבח מודרני עם סימון אלרגנים.', img:'' }
+        ]
+      },
+      { d:6, city:'סיגישוארה → סובטה → קלוז׳', hotel:'קלוז׳',
+        attractions:[
+          { n:'אגם הדובים (Sovata)', q:'Lacul Ursu Sovata',
+            desc:'אגם מלוח תרמי לשחייה; בדקו התאמה לתינוק.', img:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Lacul_Ursu%2C_Sovata.jpg/640px-Lacul_Ursu%2C_Sovata.jpg' },
+          { n:'רכבת קיטור', q:'Sovata narrow gauge railway',
+            desc:'נסיעה נוסטלגית בקיטור – חוויה לילדים.', img:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Sovata_Steam_Train.jpg/640px-Sovata_Steam_Train.jpg' }
+        ],
+        food:[
+          { n:'Hotel Pacsirta Restaurant', t:'GF', q:'Pacsirta Sovata Restaurant',
+            desc:'עצירת צהריים טובה עם מודעות ל-GF.', img:'' },
+          { n:'Nuka Bistro', t:'GF', q:'Nuka Bistro Cluj',
+            desc:'ביסטרו ידידותי לילדים והתאמות ללא גלוטן.', img:'' }
+        ]
+      },
+      { d:7, city:'קלוז׳', hotel:'קלוז׳',
+        attractions:[
+          { n:'Salina Turda', q:'Salina Turda',
+            desc:'מכרה מלח עצום עם אגם תת־קרקעי.', img:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Salina_Turda.jpg/640px-Salina_Turda.jpg' },
+          { n:'קניון טורזי (תצפית קלה)', q:'Cheile Turzii Viewpoint',
+            desc:'שמורה מרשימה; עם ילדים – תצפיות וגשרים קצרים.', img:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Cheile_Turzii.jpg/640px-Cheile_Turzii.jpg' }
+        ],
+        food:[
+          { n:'Pizza da Giulia', t:'פיצה GF', q:'Pizza da Giulia Cluj',
+            desc:'בצק ללא גלוטן—בדקו זמינות מראש.', img:'' },
+          { n:'Friandise', t:'קינוחים GF', q:'Friandise Cluj',
+            desc:'קינוחים נבחרים ללא גלוטן.', img:'' },
+          { n:'Samsara Foodhouse', t:'GF', q:'Samsara Foodhouse Cluj',
+            desc:'טבעוני/צמחוני, ידידותי ל-GF.', img:'' }
+        ]
+      },
+      { d:8, city:'סיביו → טרנספגרשן → בוקרשט', hotel:'בוקרשט',
+        attractions:[
+          { n:'כביש טרנספגרשן', q:'Transfăgărășan',
+            desc:'כביש הררי מפותל ומלא תצפיות.', img:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Transfagarasan.jpg/640px-Transfagarasan.jpg' },
+          { n:'מדגרת פורלים Albota', q:'Păstrăvăria Albota',
+            desc:'מתחם כפרי עם מסעדה ושטח משחקים.', img:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Albota_complex.jpg/640px-Albota_complex.jpg' }
+        ],
+        food:[
+          { n:'Păstrăvăria Albota', t:'GF', q:'Păstrăvăria Albota',
+            desc:'פורל טרי על הגריל ותוספות GF.', img:'' }
+        ]
+      },
+      { d:9, city:'בוקרשט → טיסה', hotel:'—',
+        attractions:[
+          { n:'בוקר רגוע', q:'Old Town Bucharest coffee',
+            desc:'טיולון קצר/קפה בעיר העתיקה לפני שדה התעופה.', img:'' }
+        ],
+        food:[
+          { n:'Ivy Coffee Shop', t:'קפה GF', q:'Ivy Coffee Bucharest',
+            desc:'קפה וקינוח קטן ללא גלוטן לדרך.', img:'' }
+        ]
+      }
+    ];
+
+    // Simple EN labels (place names kept as-is)
+    const translateCity = (c)=>({
+      'בוקרשט':'Bucharest','סינאיה → בראשוב':'Sinaia → Brașov','בראשוב':'Brașov',
+      'בראשוב → סיגישוארה':'Brașov → Sighișoara','סיגישוארה':'Sighișoara',
+      'סיגישוארה → סובטה → קלוז׳':'Sighișoara → Sovata → Cluj','קלוז׳':'Cluj-Napoca',
+      'סיביו → טרנספגרשן → בוקרשט':'Sibiu → Transfăgărășan → Bucharest','בוקרשט → טיסה':'Bucharest → Flight'
+    }[c]||c);
+    const EN = HE.map(d=>({ d:d.d, city:translateCity(d.city), hotel:d.hotel==='—'?'—':d.hotel, attractions:d.attractions, food:d.food }));
+
+    // ---------- UI helpers
+    let LANG = (localStorage.getItem('lang') || 'he');
+    const $title = document.getElementById('appTitle');
+    const $days = document.getElementById('days');
+    const $langBtn = document.getElementById('langBtn');
+    const $themeBtn = document.getElementById('themeBtn');
+    const $search = document.getElementById('search');
+    const $clearBtn = document.getElementById('clearBtn');
+    const $expandBtn = document.getElementById('expandBtn');
+    const $collapseBtn = document.getElementById('collapseBtn');
+    const $nearbyBtn = document.getElementById('nearbyBtn');
+
+    function t(key){
+      const he = { plan:'תכנית טיול ברומניה', hotel:'מלון', attractions:'אטרקציות', food:'אוכל', map:'📍', nav:'🧭' };
+      const en = { plan:'Romania Trip Plan', hotel:'Hotel', attractions:'Attractions', food:'Food', map:'📍', nav:'🧭' };
+      return (LANG==='he'?he:en)[key];
+    }
+    const gmapsSearch = (q)=> 'https://www.google.com/maps/search/'+encodeURIComponent(q);
+    const gmapsNav = (q)=> 'https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(q);
+    const imgTag = (src, alt)=> {
+      const fallback='https://placehold.co/176x132?text=%F0%9F%97%BC';
+      return `<img class="thumb" loading="lazy" src="${src||fallback}" onerror="this.src='${fallback}'" alt="${alt||''}">`;
+    };
+
+    function listItem(p){
+      return `
+        <li class="place">
+          ${imgTag(p.img, p.n)}
+          <div>
+            <div><strong>${p.n}</strong> ${p.t?`<span class="sm">(${p.t})</span>`:''}</div>
+            <div class="desc">${p.desc||''}</div>
+            <div class="actions">
+              <a class="pin" href="${gmapsSearch(p.q)}" target="_blank" rel="noopener">${t('map')}</a>
+              <a class="pin" href="${gmapsNav(p.q)}" target="_blank" rel="noopener">${t('nav')}</a>
+            </div>
+          </div>
+        </li>`;
+    }
+
+    function dayCard(d, opened=false){
+      const dir = LANG==='he' ? 'rtl' : 'ltr';
+      const attCount = d.attractions.length, foodCount = d.food.length;
+      return `
+        <details class="card" data-city="${d.city}" data-day="${d.d}" ${opened?'open':''}>
+          <summary>
+            <div class="summary-title">${LANG==='he'?'יום':'Day'} ${d.d} • ${d.city}</div>
+            <div class="summary-meta">
+              <span class="summary-badges">
+                <span class="chip">${t('hotel')}: ${d.hotel}</span>
+                <span class="chip">${t('attractions')}: ${attCount}</span>
+                <span class="chip">${t('food')}: ${foodCount}</span>
+              </span>
+              <span class="chev">▶</span>
+            </div>
+          </summary>
+          <div class="section-body">
+            <div class="line"></div>
+            <h3>${t('attractions')}</h3>
+            <ul ${dir==='ltr'?'class="langLTR"':''}>${d.attractions.map(listItem).join('')}</ul>
+            <h3>${t('food')}</h3>
+            <ul ${dir==='ltr'?'class="langLTR"':''}>${d.food.map(listItem).join('')}</ul>
+          </div>
+        </details>
+      `;
+    }
+
+    function render(openMatched=false){
+      const data = (LANG==='he'?HE:EN);
+      $title.textContent = t('plan');
+      $langBtn.textContent = LANG==='he' ? 'EN' : 'HE';
+      document.documentElement.setAttribute('dir', LANG==='he'?'rtl':'ltr');
+      const q = ($search.value || '').toLowerCase();
+
+      // decide which days open
+      const html = data.map(d=>{
+        const blob = JSON.stringify(d).toLowerCase();
+        const match = q ? blob.includes(q) : false;
+        return dayCard(d, openMatched ? match : false);
+      }).join('');
+
+      $days.innerHTML = html;
+
+      // if no query, keep all closed by default; if there is a query and nothing matched, keep all closed
+      if(q && [...$days.querySelectorAll('details[open]')].length===0){
+        // open none
+      }
+    }
+
+    // ---------- Events
+    $langBtn.onclick = ()=>{ LANG = (LANG==='he')?'en':'he'; localStorage.setItem('lang',LANG); render(false); };
+    $themeBtn.onclick = ()=>{ document.body.classList.toggle('dark'); localStorage.setItem('theme', document.body.classList.contains('dark')?'dark':'light'); $themeBtn.textContent = document.body.classList.contains('dark')?'☀️':'🌙'; };
+    $themeBtn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+
+    $search.oninput = ()=> render(true);
+    $clearBtn.onclick = ()=>{ $search.value=''; render(false); };
+    $expandBtn.onclick = ()=>{ document.querySelectorAll('#days details').forEach(d=>d.open=true); };
+    $collapseBtn.onclick = ()=>{ document.querySelectorAll('#days details').forEach(d=>d.open=false); };
+
+    $nearbyBtn.onclick = ()=>{ window.open(gmapsSearch('gluten free restaurant'), '_blank', 'noopener'); };
+
+    // ---------- PWA: single-file manifest + SW via Blob
+    (function makeManifest(){
+      const manifest = {
+        name: "טיול ברומניה – מסלול + אוכל GF",
+        short_name: "Romania Trip",
+        dir: (LANG==='he'?'rtl':'ltr'),
+        lang: (LANG==='he'?'he':'en'),
+        start_url: "./",
+        scope: "./",
+        display: "standalone",
+        background_color: "#0b1020",
+        theme_color: "#0ea5e9",
+        icons: []
+      };
+      const blob = new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'});
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('link');
+      link.rel = 'manifest';
+      link.href = url;
+      document.head.appendChild(link);
+    })();
+
+    (function registerSW(){
+      if(!('serviceWorker' in navigator)) return;
+      const swCode = `
+        const VERSION='v1.2-accordion';
+        const SHELL=['./'];
+        self.addEventListener('install',e=>{e.waitUntil(caches.open(VERSION).then(c=>c.addAll(SHELL))); self.skipWaiting();});
+        self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==VERSION).map(k=>caches.delete(k))))); self.clients.claim();});
+        self.addEventListener('fetch',e=>{
+          const r=e.request, isMaps=r.url.includes('google.com/maps')||r.url.includes('gstatic.com')||r.url.includes('googleapis.com');
+          if(isMaps){ e.respondWith(fetch(r).catch(()=>caches.match(r))); return; }
+          e.respondWith(caches.match(r).then(cached=>{
+            const fetcher=fetch(r).then(net=>{ const copy=net.clone(); if(r.method==='GET' && r.url.startsWith(self.location.origin)){ caches.open(VERSION).then(c=>c.put(r,copy)); } return net;}).catch(()=>cached);
+            return cached||fetcher;
+          }));
+        });
+      `;
+      const swBlob = new Blob([swCode], {type:'text/javascript'});
+      const swUrl = URL.createObjectURL(swBlob);
+      window.addEventListener('load', ()=> navigator.serviceWorker.register(swUrl));
+    })();
+
+    // install prompt
+    let deferredPrompt=null;
+    const $install=document.getElementById('installBtn');
+    window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); deferredPrompt=e; $install.style.display='inline-block'; });
+    $install.onclick=async()=>{ if(!deferredPrompt) return; deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null; $install.style.display='none'; };
+
+    // initial render
+    render(false);
+  </script>
+</body>
+</html>
